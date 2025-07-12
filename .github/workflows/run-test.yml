@@ -1,4 +1,4 @@
-name: Robot Test and Publish
+name: Robot Test → Pages + Artifacts
 
 on:
   push:
@@ -8,21 +8,28 @@ jobs:
   test-and-publish:
     runs-on: ubuntu-latest
 
+    # 1️⃣  Give the default GITHUB_TOKEN write access so we can push to gh‑pages
+    permissions:
+      contents: write   # push commit to gh‑pages
+      pages: write      # only needed if you set Pages source = “GitHub Actions”
+      id-token: write   # (same)
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install Robot Framework
         run: pip install robotframework
 
-      - name: Run Robot Tests
+      - name: Run Robot tests
         run: |
           mkdir -p results
           robot --outputdir results tests/
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # 2️⃣  Upload results/ as a job artifact (downloadable ZIP, 90‑day default)
+      - name: Upload Robot artifacts
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./results
-          publish_branch: gh-pages
+          name: robot-results
+          path: results/**
+          retention-days: 30         # keep 30 days (optional)
