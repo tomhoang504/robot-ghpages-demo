@@ -32,4 +32,4 @@ jobs:
         with:
           name: robot-results
           path: results/**
-          retention-days: 30         # keep 30 days (optional)
+          retention-days: 1         # keep 30 days (optional)
